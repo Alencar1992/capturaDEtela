@@ -28,6 +28,8 @@ O repositório também contém uma versão nativa em `desktop/CapturaRapida.Nati
 - usa um atalho global configurável, com padrão `Ctrl + Alt + P`;
 - captura o monitor inteiro onde o cursor estiver;
 - copia a imagem automaticamente para a área de transferência;
+- permite salvar opcionalmente uma cópia PNG em uma pasta escolhida;
+- gera nomes automáticos com data e hora, como `Captura_2026-07-15_15-42-30-123.png`;
 - aceita botões de mouse configurados para enviar o mesmo atalho;
 - oferece a opção de iniciar automaticamente com o Windows.
 
