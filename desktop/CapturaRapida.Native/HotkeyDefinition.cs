@@ -31,11 +31,8 @@ internal static class HotkeyFormatter
         return string.Join(" + ", parts);
     }
 
-    private static string KeyLabel(Keys key) => key switch
+    private static string KeyLabel(Keys key)
     {
-        >= Keys.A and <= Keys.Z => key.ToString(),
-        >= Keys.F1 and <= Keys.F12 => key.ToString(),
-        Keys.PrintScreen => "Print Screen",
-        _ => key.ToString(),
-    };
+        return key == Keys.PrintScreen ? "Print Screen" : key.ToString();
+    }
 }
