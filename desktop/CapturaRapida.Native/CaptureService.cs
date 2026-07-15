@@ -42,4 +42,19 @@ internal static class CaptureService
             }
         }
     }
+
+    public static string SavePng(Image image, string directory)
+    {
+        if (string.IsNullOrWhiteSpace(directory))
+        {
+            throw new InvalidOperationException("Escolha uma pasta para salvar as capturas.");
+        }
+
+        Directory.CreateDirectory(directory);
+
+        var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
+        var path = Path.Combine(directory, $"Captura_{timestamp}.png");
+        image.Save(path, ImageFormat.Png);
+        return path;
+    }
 }
