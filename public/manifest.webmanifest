@@ -1,0 +1,19 @@
+{
+  "name": "Captura Rápida",
+  "short_name": "Captura",
+  "description": "Capture uma tela, janela ou guia e copie a imagem para a área de transferência.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
