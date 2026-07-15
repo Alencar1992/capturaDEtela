@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>CapturaRapida</AssemblyName>
+    <RootNamespace>CapturaRapida.Native</RootNamespace>
+    <Version>1.0.0</Version>
+    <Authors>Alencar</Authors>
+    <Description>Captura o monitor sob o cursor usando um atalho global e copia a imagem para a área de transferência.</Description>
+  </PropertyGroup>
+
+</Project>

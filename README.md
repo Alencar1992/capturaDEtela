@@ -20,6 +20,28 @@ Clique/atalho → seletor do navegador → MediaStream → Canvas → PNG
 
 Nenhuma imagem é enviada a servidor. Todo o processamento acontece no navegador.
 
+## Aplicativo nativo para Windows
+
+O repositório também contém uma versão nativa em `desktop/CapturaRapida.Native` para uso em segundo plano:
+
+- fica na bandeja do Windows, sem precisar manter uma janela aberta;
+- usa um atalho global configurável, com padrão `Ctrl + Alt + P`;
+- captura o monitor inteiro onde o cursor estiver;
+- copia a imagem automaticamente para a área de transferência;
+- aceita botões de mouse configurados para enviar o mesmo atalho;
+- oferece a opção de iniciar automaticamente com o Windows.
+
+### Obter o executável
+
+O workflow **Build Windows App** gera um único arquivo portátil `CapturaRapida.exe`:
+
+1. Abra a aba **Actions** do repositório.
+2. Selecione a execução mais recente de **Build Windows App**.
+3. Na seção **Artifacts**, baixe `CapturaRapida-Windows-x64`.
+4. Extraia o ZIP e execute `CapturaRapida.exe`.
+
+Na primeira execução, escolha o atalho e clique em **Salvar e ocultar**. Depois, configure o botão desejado no software do mouse para enviar essa combinação.
+
 ## Executar localmente
 
 Requisitos: Node.js 22 ou superior.

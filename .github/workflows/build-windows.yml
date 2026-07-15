@@ -1,0 +1,50 @@
+name: Build Windows App
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "desktop/**"
+      - ".github/workflows/build-windows.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore desktop/CapturaRapida.Native/CapturaRapida.Native.csproj
+
+      - name: Build
+        run: dotnet build desktop/CapturaRapida.Native/CapturaRapida.Native.csproj --configuration Release --no-restore
+
+      - name: Publish portable executable
+        run: >-
+          dotnet publish desktop/CapturaRapida.Native/CapturaRapida.Native.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          --no-restore
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:DebugType=None
+          -p:DebugSymbols=false
+          --output publish/windows-x64
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: CapturaRapida-Windows-x64
+          path: publish/windows-x64/CapturaRapida.exe
+          if-no-files-found: error
