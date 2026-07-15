@@ -14,6 +14,9 @@ internal sealed class MainForm : Form
     private readonly CheckBox _winCheckBox;
     private readonly ComboBox _keyComboBox;
     private readonly CheckBox _startWithWindowsCheckBox;
+    private readonly CheckBox _saveToFileCheckBox;
+    private readonly TextBox _saveDirectoryTextBox;
+    private readonly Button _browseDirectoryButton;
     private readonly Label _shortcutPreviewLabel;
     private readonly Label _statusLabel;
 
@@ -30,7 +33,7 @@ internal sealed class MainForm : Form
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         MinimizeBox = true;
-        ClientSize = new Size(560, 470);
+        ClientSize = new Size(560, 590);
         BackColor = Color.White;
         Font = new Font("Segoe UI", 10F);
         Icon = SystemIcons.Application;
@@ -102,19 +105,42 @@ internal sealed class MainForm : Form
             Location = new Point(32, 298),
         };
 
+        _saveToFileCheckBox = new CheckBox
+        {
+            AutoSize = true,
+            Text = "Salvar também uma cópia em PNG",
+            Location = new Point(32, 331),
+        };
+
+        _saveDirectoryTextBox = new TextBox
+        {
+            Location = new Point(32, 365),
+            Size = new Size(402, 29),
+        };
+
+        _browseDirectoryButton = new Button
+        {
+            Text = "Escolher...",
+            Location = new Point(443, 363),
+            Size = new Size(89, 33),
+            FlatStyle = FlatStyle.Flat,
+        };
+        _browseDirectoryButton.Click += (_, _) => ChooseSaveDirectory();
+        _saveToFileCheckBox.CheckedChanged += (_, _) => UpdateSaveControls();
+
         var mouseHintLabel = new Label
         {
             AutoSize = false,
             Text = "No software do mouse, configure o botão desejado para enviar exatamente o atalho mostrado acima.",
             ForeColor = Color.FromArgb(80, 92, 108),
-            Location = new Point(32, 331),
+            Location = new Point(32, 411),
             Size = new Size(495, 42),
         };
 
         var testButton = new Button
         {
             Text = "Testar captura",
-            Location = new Point(29, 387),
+            Location = new Point(29, 497),
             Size = new Size(145, 42),
             FlatStyle = FlatStyle.Flat,
         };
@@ -124,7 +150,7 @@ internal sealed class MainForm : Form
         var saveButton = new Button
         {
             Text = "Salvar e ocultar",
-            Location = new Point(359, 387),
+            Location = new Point(359, 497),
             Size = new Size(173, 42),
             FlatStyle = FlatStyle.Flat,
             BackColor = Color.FromArgb(8, 102, 229),
@@ -139,7 +165,7 @@ internal sealed class MainForm : Form
             AutoSize = false,
             ForeColor = Color.FromArgb(20, 128, 74),
             TextAlign = ContentAlignment.MiddleLeft,
-            Location = new Point(29, 438),
+            Location = new Point(29, 548),
             Size = new Size(503, 24),
         };
 
@@ -148,6 +174,9 @@ internal sealed class MainForm : Form
             descriptionLabel,
             hotkeyGroup,
             _startWithWindowsCheckBox,
+            _saveToFileCheckBox,
+            _saveDirectoryTextBox,
+            _browseDirectoryButton,
             mouseHintLabel,
             testButton,
             saveButton,
@@ -254,6 +283,9 @@ internal sealed class MainForm : Form
         _shiftCheckBox.Checked = _config.Modifiers.HasFlag(HotkeyModifiers.Shift);
         _winCheckBox.Checked = _config.Modifiers.HasFlag(HotkeyModifiers.Win);
         _startWithWindowsCheckBox.Checked = _config.StartWithWindows;
+        _saveToFileCheckBox.Checked = _config.SaveToFile;
+        _saveDirectoryTextBox.Text = _config.SaveDirectory;
+        UpdateSaveControls();
 
         var selectedIndex = _keyComboBox.Items
             .Cast<HotkeyOption>()
@@ -281,6 +313,30 @@ internal sealed class MainForm : Form
         _shortcutPreviewLabel.Text = HotkeyFormatter.Format(GetSelectedModifiers(), GetSelectedKey());
     }
 
+    private void UpdateSaveControls()
+    {
+        _saveDirectoryTextBox.Enabled = _saveToFileCheckBox.Checked;
+        _browseDirectoryButton.Enabled = _saveToFileCheckBox.Checked;
+    }
+
+    private void ChooseSaveDirectory()
+    {
+        using var dialog = new FolderBrowserDialog
+        {
+            Description = "Escolha onde as capturas serão salvas",
+            UseDescriptionForTitle = true,
+            ShowNewFolderButton = true,
+            SelectedPath = Directory.Exists(_saveDirectoryTextBox.Text)
+                ? _saveDirectoryTextBox.Text
+                : Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+        };
+
+        if (dialog.ShowDialog(this) == DialogResult.OK)
+        {
+            _saveDirectoryTextBox.Text = dialog.SelectedPath;
+        }
+    }
+
     private void SaveSettings()
     {
         var newModifiers = GetSelectedModifiers();
@@ -289,6 +345,12 @@ internal sealed class MainForm : Form
         if (newModifiers == HotkeyModifiers.None)
         {
             ShowStatus("Escolha pelo menos um modificador: Ctrl, Alt, Shift ou Win.", isError: true);
+            return;
+        }
+
+        if (_saveToFileCheckBox.Checked && string.IsNullOrWhiteSpace(_saveDirectoryTextBox.Text))
+        {
+            ShowStatus("Escolha uma pasta para salvar as capturas.", isError: true);
             return;
         }
 
@@ -311,6 +373,8 @@ internal sealed class MainForm : Form
             _config.Modifiers = newModifiers;
             _config.Key = newKey;
             _config.StartWithWindows = _startWithWindowsCheckBox.Checked;
+            _config.SaveToFile = _saveToFileCheckBox.Checked;
+            _config.SaveDirectory = _saveDirectoryTextBox.Text.Trim();
             _config.SetupCompleted = true;
             ConfigStore.Save(_config);
 
@@ -373,12 +437,22 @@ internal sealed class MainForm : Form
             using var bitmap = CaptureService.CaptureMonitorUnderCursor();
             CaptureService.CopyImageToClipboard(bitmap);
 
-            _statusLabel.Text = $"Captura copiada às {DateTime.Now:HH:mm:ss}.";
+            string? savedPath = null;
+            if (_config.SaveToFile)
+            {
+                savedPath = CaptureService.SavePng(bitmap, _config.SaveDirectory);
+            }
+
+            _statusLabel.Text = savedPath is null
+                ? $"Captura copiada às {DateTime.Now:HH:mm:ss}."
+                : $"Captura copiada e salva às {DateTime.Now:HH:mm:ss}.";
             _statusLabel.ForeColor = Color.FromArgb(20, 128, 74);
             _notifyIcon.ShowBalloonTip(
                 1800,
-                "Captura copiada",
-                "A imagem do monitor sob o cursor está na área de transferência.",
+                savedPath is null ? "Captura copiada" : "Captura copiada e salva",
+                savedPath is null
+                    ? "A imagem do monitor sob o cursor está na área de transferência."
+                    : $"Arquivo salvo em {savedPath}",
                 ToolTipIcon.Info);
         }
         catch (Exception exception)
