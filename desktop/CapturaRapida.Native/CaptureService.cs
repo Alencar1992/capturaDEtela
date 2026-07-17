@@ -25,6 +25,28 @@ internal static class CaptureService
         return bitmap;
     }
 
+    public static Bitmap CaptureVirtualScreen()
+    {
+        var bounds = SystemInformation.VirtualScreen;
+        var bitmap = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
+
+        using var graphics = Graphics.FromImage(bitmap);
+        graphics.CopyFromScreen(bounds.Left, bounds.Top, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
+        return bitmap;
+    }
+
+    public static Bitmap Crop(Bitmap source, Rectangle selection)
+    {
+        var imageBounds = new Rectangle(Point.Empty, source.Size);
+        var safeSelection = Rectangle.Intersect(imageBounds, selection);
+        if (safeSelection.Width < 2 || safeSelection.Height < 2)
+        {
+            throw new InvalidOperationException("Selecione uma área válida da tela.");
+        }
+
+        return source.Clone(safeSelection, PixelFormat.Format32bppArgb);
+    }
+
     public static void CopyImageToClipboard(Image image)
     {
         const int maximumAttempts = 5;
