@@ -5,6 +5,8 @@ internal sealed class AppConfig
     public bool SetupCompleted { get; set; }
     public HotkeyModifiers Modifiers { get; set; } = HotkeyModifiers.Control | HotkeyModifiers.Alt;
     public Keys Key { get; set; } = Keys.P;
+    public HotkeyModifiers SelectionModifiers { get; set; } = HotkeyModifiers.Control | HotkeyModifiers.Alt;
+    public Keys SelectionKey { get; set; } = Keys.S;
     public bool StartWithWindows { get; set; }
     public bool SaveToFile { get; set; }
     public string SaveDirectory { get; set; } = Path.Combine(
