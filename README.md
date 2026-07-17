@@ -25,9 +25,9 @@ Nenhuma imagem é enviada a servidor. Todo o processamento acontece no navegador
 O repositório também contém uma versão nativa em `desktop/CapturaRapida.Native` para uso em segundo plano:
 
 - fica na bandeja do Windows, sem precisar manter uma janela aberta;
-- usa uma tecla global configurável, com padrão `F8`;
+- aceita tecla única ou combinação global configurável, com padrão `F8`;
 - captura o monitor inteiro onde o cursor estiver;
-- usa uma segunda tecla configurável, com padrão `F9`, para capturar uma área demarcada;
+- aceita uma segunda tecla única ou combinação, com padrão `F9`, para capturar uma área demarcada;
 - congela a imagem de todos os monitores enquanto você arrasta para selecionar a região;
 - permite cancelar a seleção com `Esc` ou com o botão direito do mouse;
 - copia a imagem automaticamente para a área de transferência;
