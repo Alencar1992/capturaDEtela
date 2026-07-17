@@ -27,6 +27,9 @@ O repositório também contém uma versão nativa em `desktop/CapturaRapida.Nati
 - fica na bandeja do Windows, sem precisar manter uma janela aberta;
 - usa um atalho global configurável, com padrão `Ctrl + Alt + P`;
 - captura o monitor inteiro onde o cursor estiver;
+- usa um segundo atalho configurável, com padrão `Ctrl + Alt + S`, para capturar uma área demarcada;
+- congela a imagem de todos os monitores enquanto você arrasta para selecionar a região;
+- permite cancelar a seleção com `Esc` ou com o botão direito do mouse;
 - copia a imagem automaticamente para a área de transferência;
 - permite salvar opcionalmente uma cópia PNG em uma pasta escolhida;
 - gera nomes automáticos com data e hora, como `Captura_2026-07-15_15-42-30-123.png`;
@@ -42,7 +45,7 @@ O workflow **Build Windows App** gera um único arquivo portátil `CapturaRapida
 3. Na seção **Artifacts**, baixe `CapturaRapida-Windows-x64`.
 4. Extraia o ZIP e execute `CapturaRapida.exe`.
 
-Na primeira execução, escolha o atalho e clique em **Salvar e ocultar**. Depois, configure o botão desejado no software do mouse para enviar essa combinação.
+Na primeira execução, escolha os atalhos de tela inteira e área selecionada e clique em **Salvar e ocultar**. Depois, configure os botões desejados no software do mouse para enviar cada combinação.
 
 ## Executar localmente
 
