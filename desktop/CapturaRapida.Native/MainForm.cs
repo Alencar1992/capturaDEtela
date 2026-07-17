@@ -9,7 +9,15 @@ internal sealed class MainForm : Form
 
     private readonly AppConfig _config;
     private readonly NotifyIcon _notifyIcon;
+    private readonly CheckBox _controlCheckBox;
+    private readonly CheckBox _altCheckBox;
+    private readonly CheckBox _shiftCheckBox;
+    private readonly CheckBox _winCheckBox;
     private readonly ComboBox _keyComboBox;
+    private readonly CheckBox _selectionControlCheckBox;
+    private readonly CheckBox _selectionAltCheckBox;
+    private readonly CheckBox _selectionShiftCheckBox;
+    private readonly CheckBox _selectionWinCheckBox;
     private readonly ComboBox _selectionKeyComboBox;
     private readonly Label _selectionShortcutPreviewLabel;
     private readonly CheckBox _startWithWindowsCheckBox;
@@ -27,14 +35,6 @@ internal sealed class MainForm : Form
     public MainForm()
     {
         _config = ConfigStore.Load();
-        if (_config.Modifiers != HotkeyModifiers.None || _config.SelectionModifiers != HotkeyModifiers.None)
-        {
-            _config.Modifiers = HotkeyModifiers.None;
-            _config.Key = Keys.F8;
-            _config.SelectionModifiers = HotkeyModifiers.None;
-            _config.SelectionKey = Keys.F9;
-            ConfigStore.Save(_config);
-        }
 
         Text = "Captura Rápida";
         StartPosition = FormStartPosition.CenterScreen;
@@ -58,7 +58,7 @@ internal sealed class MainForm : Form
         var descriptionLabel = new Label
         {
             AutoSize = false,
-            Text = "Escolha uma tecla para capturar o monitor inteiro e outra para demarcar uma área. A imagem será copiada automaticamente.",
+            Text = "Configure uma tecla única ou uma combinação para cada tipo de captura. A imagem será copiada automaticamente.",
             ForeColor = Color.FromArgb(80, 92, 108),
             Location = new Point(30, 68),
             Size = new Size(500, 52),
@@ -66,17 +66,22 @@ internal sealed class MainForm : Form
 
         var hotkeyGroup = new GroupBox
         {
-            Text = "Tecla única — monitor inteiro",
+            Text = "Atalho — monitor inteiro",
             Location = new Point(28, 128),
             Size = new Size(504, 150),
             Padding = new Padding(18),
         };
 
+        _controlCheckBox = CreateModifierCheckBox("Ctrl", 22);
+        _altCheckBox = CreateModifierCheckBox("Alt", 105);
+        _shiftCheckBox = CreateModifierCheckBox("Shift", 180);
+        _winCheckBox = CreateModifierCheckBox("Win", 270);
+
         _keyComboBox = new ComboBox
         {
             DropDownStyle = ComboBoxStyle.DropDownList,
-            Location = new Point(174, 32),
-            Size = new Size(156, 31),
+            Location = new Point(360, 32),
+            Size = new Size(115, 31),
         };
 
         _keyComboBox.Items.AddRange(CreateHotkeyOptions().Cast<object>().ToArray());
@@ -93,23 +98,31 @@ internal sealed class MainForm : Form
         };
 
         hotkeyGroup.Controls.AddRange([
+            _controlCheckBox,
+            _altCheckBox,
+            _shiftCheckBox,
+            _winCheckBox,
             _keyComboBox,
             _shortcutPreviewLabel,
         ]);
 
         var selectionHotkeyGroup = new GroupBox
         {
-            Text = "Tecla única — área selecionada",
+            Text = "Atalho — área selecionada",
             Location = new Point(28, 286),
             Size = new Size(504, 150),
             Padding = new Padding(18),
         };
 
+        _selectionControlCheckBox = CreateModifierCheckBox("Ctrl", 22);
+        _selectionAltCheckBox = CreateModifierCheckBox("Alt", 105);
+        _selectionShiftCheckBox = CreateModifierCheckBox("Shift", 180);
+        _selectionWinCheckBox = CreateModifierCheckBox("Win", 270);
         _selectionKeyComboBox = new ComboBox
         {
             DropDownStyle = ComboBoxStyle.DropDownList,
-            Location = new Point(174, 32),
-            Size = new Size(156, 31),
+            Location = new Point(360, 32),
+            Size = new Size(115, 31),
         };
         _selectionKeyComboBox.Items.AddRange(CreateHotkeyOptions().Cast<object>().ToArray());
         _selectionShortcutPreviewLabel = new Label
@@ -123,6 +136,10 @@ internal sealed class MainForm : Form
             Size = new Size(453, 42),
         };
         selectionHotkeyGroup.Controls.AddRange([
+            _selectionControlCheckBox,
+            _selectionAltCheckBox,
+            _selectionShiftCheckBox,
+            _selectionWinCheckBox,
             _selectionKeyComboBox,
             _selectionShortcutPreviewLabel,
         ]);
@@ -160,7 +177,7 @@ internal sealed class MainForm : Form
         var mouseHintLabel = new Label
         {
             AutoSize = false,
-            Text = "Recomendamos F8 e F9 para não interferir na digitação. No software do mouse, associe cada botão à tecla escolhida.",
+            Text = "Os modificadores são opcionais: sem marcação, o atalho usa uma tecla única. No software do mouse, associe cada botão ao atalho escolhido.",
             ForeColor = Color.FromArgb(80, 92, 108),
             Location = new Point(32, 569),
             Size = new Size(495, 42),
@@ -242,7 +259,15 @@ internal sealed class MainForm : Form
 
         LoadSettingsIntoControls();
 
+        foreach (var checkBox in new[] { _controlCheckBox, _altCheckBox, _shiftCheckBox, _winCheckBox })
+        {
+            checkBox.CheckedChanged += (_, _) => UpdateShortcutPreview();
+        }
         _keyComboBox.SelectedIndexChanged += (_, _) => UpdateShortcutPreview();
+        foreach (var checkBox in new[] { _selectionControlCheckBox, _selectionAltCheckBox, _selectionShiftCheckBox, _selectionWinCheckBox })
+        {
+            checkBox.CheckedChanged += (_, _) => UpdateSelectionShortcutPreview();
+        }
         _selectionKeyComboBox.SelectedIndexChanged += (_, _) => UpdateSelectionShortcutPreview();
     }
 
@@ -292,6 +317,13 @@ internal sealed class MainForm : Form
         base.OnFormClosing(e);
     }
 
+    private static CheckBox CreateModifierCheckBox(string text, int left) => new()
+    {
+        AutoSize = true,
+        Text = text,
+        Location = new Point(left, 36),
+    };
+
     private static IReadOnlyList<HotkeyOption> CreateHotkeyOptions()
     {
         var options = new List<HotkeyOption>();
@@ -314,6 +346,10 @@ internal sealed class MainForm : Form
 
     private void LoadSettingsIntoControls()
     {
+        _controlCheckBox.Checked = _config.Modifiers.HasFlag(HotkeyModifiers.Control);
+        _altCheckBox.Checked = _config.Modifiers.HasFlag(HotkeyModifiers.Alt);
+        _shiftCheckBox.Checked = _config.Modifiers.HasFlag(HotkeyModifiers.Shift);
+        _winCheckBox.Checked = _config.Modifiers.HasFlag(HotkeyModifiers.Win);
         _startWithWindowsCheckBox.Checked = _config.StartWithWindows;
         _saveToFileCheckBox.Checked = _config.SaveToFile;
         _saveDirectoryTextBox.Text = _config.SaveDirectory;
@@ -327,17 +363,37 @@ internal sealed class MainForm : Form
         _keyComboBox.SelectedIndex = selectedIndex >= 0 ? selectedIndex : 15;
         UpdateShortcutPreview();
 
+        _selectionControlCheckBox.Checked = _config.SelectionModifiers.HasFlag(HotkeyModifiers.Control);
+        _selectionAltCheckBox.Checked = _config.SelectionModifiers.HasFlag(HotkeyModifiers.Alt);
+        _selectionShiftCheckBox.Checked = _config.SelectionModifiers.HasFlag(HotkeyModifiers.Shift);
+        _selectionWinCheckBox.Checked = _config.SelectionModifiers.HasFlag(HotkeyModifiers.Win);
         var selectionIndex = _selectionKeyComboBox.Items.Cast<HotkeyOption>().ToList()
             .FindIndex(option => option.Key == _config.SelectionKey);
         _selectionKeyComboBox.SelectedIndex = selectionIndex >= 0 ? selectionIndex : 18;
         UpdateSelectionShortcutPreview();
     }
 
-    private static HotkeyModifiers GetSelectedModifiers() => HotkeyModifiers.None;
+    private HotkeyModifiers GetSelectedModifiers()
+    {
+        var modifiers = HotkeyModifiers.None;
+        if (_controlCheckBox.Checked) modifiers |= HotkeyModifiers.Control;
+        if (_altCheckBox.Checked) modifiers |= HotkeyModifiers.Alt;
+        if (_shiftCheckBox.Checked) modifiers |= HotkeyModifiers.Shift;
+        if (_winCheckBox.Checked) modifiers |= HotkeyModifiers.Win;
+        return modifiers;
+    }
 
     private Keys GetSelectedKey() => (_keyComboBox.SelectedItem as HotkeyOption)?.Key ?? Keys.F8;
 
-    private static HotkeyModifiers GetSelectionModifiers() => HotkeyModifiers.None;
+    private HotkeyModifiers GetSelectionModifiers()
+    {
+        var modifiers = HotkeyModifiers.None;
+        if (_selectionControlCheckBox.Checked) modifiers |= HotkeyModifiers.Control;
+        if (_selectionAltCheckBox.Checked) modifiers |= HotkeyModifiers.Alt;
+        if (_selectionShiftCheckBox.Checked) modifiers |= HotkeyModifiers.Shift;
+        if (_selectionWinCheckBox.Checked) modifiers |= HotkeyModifiers.Win;
+        return modifiers;
+    }
 
     private Keys GetSelectionKey() => (_selectionKeyComboBox.SelectedItem as HotkeyOption)?.Key ?? Keys.F9;
 
