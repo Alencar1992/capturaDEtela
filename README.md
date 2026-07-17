@@ -33,7 +33,7 @@ O repositório também contém uma versão nativa em `desktop/CapturaRapida.Nati
 - copia a imagem automaticamente para a área de transferência;
 - permite salvar opcionalmente uma cópia PNG em uma pasta escolhida;
 - permite escolher ou criar a pasta de destino e a cria automaticamente quando necessário;
-- gera nomes automáticos como `Print_17-07-2026_15.42.08.png`;
+- gera nomes automáticos como `PRINT_17-07-2026_154208.png`;
 - aceita botões de mouse configurados para enviar o mesmo atalho;
 - oferece a opção de iniciar automaticamente com o Windows.
 
