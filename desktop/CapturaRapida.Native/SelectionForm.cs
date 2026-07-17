@@ -137,7 +137,7 @@ internal sealed class SelectionForm : Form
         var text = $"{selection.Width} × {selection.Height} px";
         using var font = new Font("Segoe UI", 9F, FontStyle.Bold);
         var size = graphics.MeasureString(text, font);
-        var y = selection.Bottom + 7;
+        var y = (float)selection.Bottom + 7;
         if (y + size.Height + 10 > graphics.VisibleClipBounds.Bottom) y = selection.Top - size.Height - 12;
         var box = new RectangleF(selection.Left, y, size.Width + 16, size.Height + 8);
         using var background = new SolidBrush(Color.FromArgb(220, 17, 24, 39));
