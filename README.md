@@ -25,14 +25,15 @@ Nenhuma imagem é enviada a servidor. Todo o processamento acontece no navegador
 O repositório também contém uma versão nativa em `desktop/CapturaRapida.Native` para uso em segundo plano:
 
 - fica na bandeja do Windows, sem precisar manter uma janela aberta;
-- usa um atalho global configurável, com padrão `Ctrl + Alt + P`;
+- usa uma tecla global configurável, com padrão `F8`;
 - captura o monitor inteiro onde o cursor estiver;
-- usa um segundo atalho configurável, com padrão `Ctrl + Alt + S`, para capturar uma área demarcada;
+- usa uma segunda tecla configurável, com padrão `F9`, para capturar uma área demarcada;
 - congela a imagem de todos os monitores enquanto você arrasta para selecionar a região;
 - permite cancelar a seleção com `Esc` ou com o botão direito do mouse;
 - copia a imagem automaticamente para a área de transferência;
 - permite salvar opcionalmente uma cópia PNG em uma pasta escolhida;
-- gera nomes automáticos com data e hora, como `Captura_2026-07-15_15-42-30-123.png`;
+- permite escolher ou criar a pasta de destino e a cria automaticamente quando necessário;
+- gera nomes automáticos como `Captura_17-07-2026_15.42.08.png`;
 - aceita botões de mouse configurados para enviar o mesmo atalho;
 - oferece a opção de iniciar automaticamente com o Windows.
 
