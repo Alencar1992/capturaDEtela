@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>CapturaRapida</AssemblyName>
     <RootNamespace>CapturaRapida.Native</RootNamespace>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <Authors>Alencar</Authors>
     <Description>Captura o monitor inteiro ou uma área demarcada usando atalhos globais e copia a imagem para a área de transferência.</Description>
   </PropertyGroup>
