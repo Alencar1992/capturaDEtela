@@ -75,11 +75,11 @@ internal static class CaptureService
         Directory.CreateDirectory(directory);
 
         var timestamp = DateTime.Now.ToString("dd-MM-yyyy_HH.mm.ss");
-        var path = Path.Combine(directory, $"Captura_{timestamp}.png");
+        var path = Path.Combine(directory, $"Print_{timestamp}.png");
         var sequence = 2;
         while (File.Exists(path))
         {
-            path = Path.Combine(directory, $"Captura_{timestamp}_{sequence}.png");
+            path = Path.Combine(directory, $"Print_{timestamp}_{sequence}.png");
             sequence++;
         }
         image.Save(path, ImageFormat.Png);
