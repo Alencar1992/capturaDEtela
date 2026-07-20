@@ -22,6 +22,7 @@ internal sealed class MainForm : Form
     private readonly Label _selectionShortcutPreviewLabel;
     private readonly CheckBox _startWithWindowsCheckBox;
     private readonly CheckBox _saveToFileCheckBox;
+    private readonly CheckBox _showCapturePreviewCheckBox;
     private readonly TextBox _saveDirectoryTextBox;
     private readonly Button _browseDirectoryButton;
     private readonly Label _shortcutPreviewLabel;
@@ -158,6 +159,13 @@ internal sealed class MainForm : Form
             Location = new Point(32, 489),
         };
 
+        _showCapturePreviewCheckBox = new CheckBox
+        {
+            AutoSize = true,
+            Text = "Exibir prévia/editor após a captura",
+            Location = new Point(286, 489),
+        };
+
         _saveDirectoryTextBox = new TextBox
         {
             Location = new Point(32, 523),
@@ -232,6 +240,7 @@ internal sealed class MainForm : Form
             selectionHotkeyGroup,
             _startWithWindowsCheckBox,
             _saveToFileCheckBox,
+            _showCapturePreviewCheckBox,
             _saveDirectoryTextBox,
             _browseDirectoryButton,
             mouseHintLabel,
@@ -352,6 +361,7 @@ internal sealed class MainForm : Form
         _winCheckBox.Checked = _config.Modifiers.HasFlag(HotkeyModifiers.Win);
         _startWithWindowsCheckBox.Checked = _config.StartWithWindows;
         _saveToFileCheckBox.Checked = _config.SaveToFile;
+        _showCapturePreviewCheckBox.Checked = _config.ShowCapturePreview;
         _saveDirectoryTextBox.Text = _config.SaveDirectory;
         UpdateSaveControls();
 
@@ -476,6 +486,7 @@ internal sealed class MainForm : Form
             _config.SelectionKey = newSelectionKey;
             _config.StartWithWindows = _startWithWindowsCheckBox.Checked;
             _config.SaveToFile = _saveToFileCheckBox.Checked;
+            _config.ShowCapturePreview = _showCapturePreviewCheckBox.Checked;
             _config.SaveDirectory = _saveDirectoryTextBox.Text.Trim();
             _config.SetupCompleted = true;
             ConfigStore.Save(_config);
@@ -607,10 +618,16 @@ internal sealed class MainForm : Form
         // A captura original fica disponível imediatamente, mesmo que a prévia seja fechada.
         CaptureService.CopyImageToClipboard(image);
 
-        using var preview = new CapturePreviewForm(image);
-        preview.ShowDialog();
-        using var finalImage = preview.GetFinalImage();
-        CaptureService.CopyImageToClipboard(finalImage);
+        using var finalImage = new Bitmap(image);
+        if (_config.ShowCapturePreview)
+        {
+            using var preview = new CapturePreviewForm(image);
+            preview.ShowDialog();
+            using var editedImage = preview.GetFinalImage();
+            using var graphics = Graphics.FromImage(finalImage);
+            graphics.DrawImageUnscaled(editedImage, Point.Empty);
+            CaptureService.CopyImageToClipboard(finalImage);
+        }
 
         string? savedPath = null;
         if (_config.SaveToFile) savedPath = CaptureService.SavePng(finalImage, _config.SaveDirectory);

@@ -32,6 +32,7 @@ O repositório também contém uma versão nativa em `desktop/CapturaRapida.Nati
 - permite cancelar a seleção com `Esc` ou com o botão direito do mouse;
 - copia a imagem automaticamente para a área de transferência;
 - abre uma prévia após a captura, com editor para marcar campos, borrar informações e escrever textos;
+- permite desativar a prévia/editor e copiar ou salvar a captura diretamente;
 - permite salvar opcionalmente uma cópia PNG em uma pasta escolhida;
 - permite escolher ou criar a pasta de destino e a cria automaticamente quando necessário;
 - organiza automaticamente os arquivos em subpastas mensais, como `Julho` e `Agosto`;

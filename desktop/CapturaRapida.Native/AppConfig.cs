@@ -9,6 +9,7 @@ internal sealed class AppConfig
     public Keys SelectionKey { get; set; } = Keys.F9;
     public bool StartWithWindows { get; set; }
     public bool SaveToFile { get; set; }
+    public bool ShowCapturePreview { get; set; } = true;
     public string SaveDirectory { get; set; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
         "Captura Rapida");
