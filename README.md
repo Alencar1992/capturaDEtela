@@ -31,8 +31,10 @@ O repositório também contém uma versão nativa em `desktop/CapturaRapida.Nati
 - congela a imagem de todos os monitores enquanto você arrasta para selecionar a região;
 - permite cancelar a seleção com `Esc` ou com o botão direito do mouse;
 - copia a imagem automaticamente para a área de transferência;
+- abre uma prévia após a captura, com editor para marcar campos, borrar informações e escrever textos;
 - permite salvar opcionalmente uma cópia PNG em uma pasta escolhida;
 - permite escolher ou criar a pasta de destino e a cria automaticamente quando necessário;
+- organiza automaticamente os arquivos em subpastas mensais, como `Julho` e `Agosto`;
 - gera nomes automáticos como `PRINT_17-07-2026_154208.png`;
 - aceita botões de mouse configurados para enviar o mesmo atalho;
 - oferece a opção de iniciar automaticamente com o Windows.

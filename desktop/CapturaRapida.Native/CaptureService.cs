@@ -1,4 +1,5 @@
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace CapturaRapida.Native;
@@ -72,6 +73,9 @@ internal static class CaptureService
             throw new InvalidOperationException("Escolha uma pasta para salvar as capturas.");
         }
 
+        var monthName = CultureInfo.GetCultureInfo("pt-BR").DateTimeFormat.GetMonthName(DateTime.Now.Month);
+        monthName = CultureInfo.GetCultureInfo("pt-BR").TextInfo.ToTitleCase(monthName);
+        directory = Path.Combine(directory, monthName);
         Directory.CreateDirectory(directory);
 
         var timestamp = DateTime.Now.ToString("dd-MM-yyyy_HHmmss");

@@ -604,9 +604,16 @@ internal sealed class MainForm : Form
 
     private void CompleteCapture(Image image, string clipboardMessage)
     {
+        // A captura original fica disponível imediatamente, mesmo que a prévia seja fechada.
         CaptureService.CopyImageToClipboard(image);
+
+        using var preview = new CapturePreviewForm(image);
+        preview.ShowDialog();
+        using var finalImage = preview.GetFinalImage();
+        CaptureService.CopyImageToClipboard(finalImage);
+
         string? savedPath = null;
-        if (_config.SaveToFile) savedPath = CaptureService.SavePng(image, _config.SaveDirectory);
+        if (_config.SaveToFile) savedPath = CaptureService.SavePng(finalImage, _config.SaveDirectory);
 
         _statusLabel.Text = savedPath is null
             ? $"Captura copiada às {DateTime.Now:HH:mm:ss}."
